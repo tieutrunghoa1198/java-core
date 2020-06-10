@@ -3,19 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bundle;
+package tpbank;
 
 /**
  *
  * @author songm
  */
-public class main {
+public class Login {
 
-    /**
-     * @param args the command line arguments
-     */
-     public static void main(String[] args) {
-        Interface gui = new Interface();
-        gui.run();
+    public static void main(String[] args) {
+        GUI gui = new GUI();
+        gui.mainMenu();
     }
 }

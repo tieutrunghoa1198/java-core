@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bundle;
+package tpbank;
 
 import java.util.*;
 
@@ -11,16 +11,19 @@ import java.util.*;
  *
  * @author songm
  */
-public class Interface {
+public class GUI {
 
     Scanner sc = new Scanner(System.in);
-    static String currentLang = "vi";
-    ResourceBundle bundle;
-    
-    void run() {
+
+    void mainMenu() {
         boolean flag = true;
         int choice;
-        Locale currentLocale;
+        TPBank program = new TPBank();
+        Validation validte = new Validation();
+
+        //initialize bundle 
+        ResourceBundle bundle = setLanguage("vi");
+
         while (flag) {
             System.out.println("=====Login Program=====");
             System.out.println("Tien Phong Bank");
@@ -29,27 +32,31 @@ public class Interface {
             System.out.println("3. Captcha");
             System.out.println("4. Exit");
 
-            currentLocale = new Locale(currentLang);
-            bundle = ResourceBundle.getBundle(Function.baseName, currentLocale);
-
             System.out.print(bundle.getString("choose_option"));
-            choice = Function.checkOption(1, 4, currentLang);
+            choice = validte.checkOption(1, 4, bundle);
             switch (choice) {
                 case 1:
-                    Interface.currentLang = "en";
-                    Function.login(currentLang);
+                    bundle = setLanguage("en");
+                    program.login(bundle);
                     break;
                 case 2:
-                    Interface.currentLang = "vi";
-                    Function.login(currentLang);
+                    bundle = setLanguage("vi");
+                    program.login(bundle);
                     break;
                 case 3:
-                    System.out.println("\n" + Function.captchaGenerator() + "\n");
+                    System.out.println("\n" + program.captchaGenerator() + "\n");
                     break;
                 case 4:
                     flag = false;
                     break;
             }
         }
+    }
+
+    ResourceBundle setLanguage(String lang) {
+        String baseName = "language.Bundle";
+        Locale currentLocale = new Locale(lang);
+        ResourceBundle bundle = ResourceBundle.getBundle(baseName, currentLocale);
+        return bundle;
     }
 }
