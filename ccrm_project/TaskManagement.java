@@ -39,7 +39,7 @@ public class TaskManagement {
             int option = validate.inputRange(1, 4);
             switch (option) {
                 case 1:
-                    Task t = manage.createTask(listTaskType);
+                    Task t = manage.createTask(listTask, listTaskType);
                     listTask.add(t);
                     break;
                 case 2:
@@ -56,12 +56,12 @@ public class TaskManagement {
         }
     }
 
-    Task createTask(List<TaskType> list) {
+    Task createTask(List<Task> list, List<TaskType> listType) {
         int id = list.size() + 1;
         System.out.print("Requirement Name:");
         String name = validate.inputString();
         System.out.print("Task Type:");
-        int type = Integer.parseInt(sc.nextLine().trim());
+        int type = validate.inputRange(1, 4);
         System.out.print("Date:");
         String date = validate.inputDate();
         System.out.print("From: ");
@@ -72,7 +72,8 @@ public class TaskManagement {
         String assignee = validate.inputString();
         System.out.print("Reviewer ");
         String reviewer = validate.inputString();
-        String taskType = list.get(type - 1).getName();
+        String taskType = listType.get(type - 1).getName();
+        System.out.println(taskType);
         double time = endTime - startTime;
 
         Task t = new Task(id, name, taskType, date, time, assignee, reviewer);
