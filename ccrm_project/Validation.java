@@ -5,6 +5,7 @@
  */
 package ccrm_project;
 
+import static ccrm_project.test.sc;
 import java.text.*;
 import java.util.*;
 
@@ -35,11 +36,25 @@ public class Validation {
         return n;
     }
 
+    public String time() {
+        String inputTime = "";
+        String regex_one = "^[\\d]{1,2}\\.{0,1}[05]{0,1}";
+        while (true) {
+            inputTime = sc.nextLine();
+            if (inputTime.matches(regex_one)) {
+                return inputTime;
+            } else {
+                System.out.println("Time must be in 8.0, 8.5, 9.0, 9.5 … -> 17.5.");
+                System.out.print("Retype: ");
+            }
+        }
+    }
+
     public double inputTime(double min, double max) {
         double n;
         while (true) {
             try {
-                n = Double.parseDouble(sc.nextLine());
+                n = Double.parseDouble(time());
                 if (n < min) {
                     throw new Exception();
                 } else if (n > max) {
@@ -48,7 +63,7 @@ public class Validation {
                 break;
             } catch (Exception e) {
                 System.out.println("Range[" + min + "-" + max + "]");
-                System.out.println("Retype time: ");
+                System.out.print("Retype time: ");
             }
         }
         return n;

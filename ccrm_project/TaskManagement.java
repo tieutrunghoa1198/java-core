@@ -39,8 +39,12 @@ public class TaskManagement {
             int option = validate.inputRange(1, 4);
             switch (option) {
                 case 1:
-                    Task t = manage.createTask(listTask, listTaskType);
-                    listTask.add(t);
+                    try {
+                        Task t = manage.createTask(listTask, listTaskType);
+                        listTask.add(t);
+                    } catch (Exception e) {
+                        System.out.println("Cannot add new task.");
+                    }
                     break;
                 case 2:
                     manage.deleteTask(listTask);
@@ -68,13 +72,19 @@ public class TaskManagement {
         double startTime = validate.inputTime(8, 17.5);
         System.out.print("To: ");
         double endTime = validate.inputTime(8, 17.5);
+
+        double time = endTime - startTime;
+        if (time < 0) {
+            System.out.println("Start time must be greater than finish time.");
+            return null;
+        }
+
         System.out.print("Assignee: ");
         String assignee = validate.inputString();
         System.out.print("Reviewer ");
         String reviewer = validate.inputString();
         String taskType = listType.get(type - 1).getName();
         System.out.println(taskType);
-        double time = endTime - startTime;
 
         Task t = new Task(id, name, taskType, date, time, assignee, reviewer);
         return t;
