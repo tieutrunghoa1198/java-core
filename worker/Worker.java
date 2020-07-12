@@ -16,33 +16,13 @@ public class Worker {
     private String name;
     private int age; 
     private double salary;
-    private String status;
-    private String date;
     private String location;
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public Worker(String id, String name, int age, double salary, String status, String date, String location) {
+    public Worker(String id, String name, int age, double salary, String location) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.salary = salary;
-        this.status = status;
-        this.date = date;
         this.location = location;
     }
 
@@ -85,6 +65,8 @@ public class Worker {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    
     
     
 }

@@ -17,6 +17,7 @@ public class Management {
 
     Scanner sc = new Scanner(System.in);
     List<Worker> list = new ArrayList<>();
+    List<History> historyList = new ArrayList<>();
 
     public void mainMenu() {
         boolean isLoop = true;
@@ -30,10 +31,11 @@ public class Management {
                     + "2. Increase salary for worker." + "\n"
                     + "3. Decrease for worker." + "\n"
                     + "4. Show adjusted salary worker information." + "\n"
+                    + "5. Worker Info" + "\n"
                     + "0. Exit." + "\n"
             );
             System.out.print("Enter option: ");
-            int option = validate.inputRange(0, 4, "Option");
+            int option = validate.inputRange(0, 5, "Option");
             switch (option) {
                 case 1:
                     Worker newWorker = worker.initWorker();
@@ -45,15 +47,19 @@ public class Management {
                     System.out.println();
                     break;
                 case 2:
-                    worker.adjustSalary("UP", list);
+                    worker.adjustSalary("UP", list, historyList);
                     System.out.println();
                     break;
                 case 3:
-                    worker.adjustSalary("DOWN", list);
+                    worker.adjustSalary("DOWN", list, historyList);
                     System.out.println();
                     break;
                 case 4:
-                    worker.display(list);
+                    worker.display(historyList);
+                    System.out.println();
+                    break;
+                case 5:
+                    worker.displayWorker(list);
                     System.out.println();
                     break;
                 case 0:
@@ -66,7 +72,7 @@ public class Management {
     }
 
     public void loadData() {
-        String id, name, status, date;
+        String id, name, location;
         int age;
         double salary;
         try {
@@ -79,10 +85,9 @@ public class Management {
                     name = token.nextToken().trim();
                     age = Integer.parseInt(token.nextToken().trim());
                     salary = Double.parseDouble(token.nextToken().trim());
-                    status = token.nextToken().trim();
-                    date = token.nextToken().trim();
-                    Worker newPro = new Worker(id, name, age, salary, status, date, line);
-                    list.add(newPro);
+                    location = token.nextToken();
+                    Worker newWorker = new Worker(id, name, age, salary, location);
+                    list.add(newWorker);
                 }
             }
             System.out.println("Data is successfully loaded.");
@@ -101,14 +106,22 @@ public class Management {
         return null;
     }
 
-    public void sort(List<Worker> list) {
+    public void sort(List<History> list) {
         boolean isSwapped;
 
         for (int i = 0; i < list.size() - 1; i++) {
             isSwapped = false;
             for (int j = 0; j < list.size() - i - 1; j++) {
-                if (list.get(j).getId().compareTo(list.get(j + 1).getId()) > 0) {
-                    Worker temp = list.get(j);
+                String str1 = list.get(j).getWorkerID();
+                String str2 = list.get(j + 1).getWorkerID();
+
+                String[] firstId = str1.split("W");
+                int a = Integer.parseInt(firstId[1]);
+                String[] secondId = str2.split("W");
+                int b = Integer.parseInt(secondId[1]);
+
+                if (a > b) {
+                    History temp = list.get(j);
                     list.set(j, list.get(j + 1));
                     list.set(j + 1, temp);
                     isSwapped = true;
@@ -120,9 +133,9 @@ public class Management {
         }
     }
 
-    public void display(List<Worker> list) {
+    public void display(List<History> list) {
         if (list.isEmpty()) {
-            System.out.println("Product list is empty.");
+            System.out.println("History is empty.");
             return;
         }
         sort(list);
@@ -132,15 +145,13 @@ public class Management {
         );
         System.out.println();
         for (int i = 0; i < list.size(); i++) {
-
-            Worker worker = list.get(i);
-            String id = worker.getId();
-            String name = worker.getName();
-            int age = worker.getAge();
-            double salary = worker.getSalary();
-            String status = worker.getStatus();
-            String date = worker.getDate();
-
+            History history = list.get(i);
+            String id = history.getWorkerID();
+            String name = history.getWorkerName();
+            int age = history.getWorkerAge();
+            double salary = history.getSalary();
+            String status = history.getStatus();
+            String date = history.getDate();
             System.out.printf("%-8s  |  %-8s  |  %-8s  |  %-8s  |  %-8s  |  %-8s  ",
                     id, name, age, salary, status, date
             );
@@ -148,7 +159,32 @@ public class Management {
         }
     }
 
-    public void adjustSalary(String status, List<Worker> list) {
+    public void displayWorker(List<Worker> list) {
+        if (list.isEmpty()) {
+            System.out.println("Product list is empty.");
+            return;
+        }
+        System.out.println("--------------------Display Information Salary-----------------------");
+        System.out.printf("%-8s  |  %-8s  |  %-8s  |  %-8s  ",
+                "Code", "Name", "Age", "Salary"
+        );
+        System.out.println();
+        for (int i = 0; i < list.size(); i++) {
+
+            Worker worker = list.get(i);
+            String id = worker.getId();
+            String name = worker.getName();
+            int age = worker.getAge();
+            double salary = worker.getSalary();
+
+            System.out.printf("%-8s  |  %-8s  |  %-8s  |  %-8s  ",
+                    id, name, age, salary
+            );
+            System.out.println();
+        }
+    }
+
+    public void adjustSalary(String status, List<Worker> list, List<History> historyList) {
         Validation validate = new Validation();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String date = sdf.format(new Date());
@@ -164,20 +200,33 @@ public class Management {
             return;
         }
 
-        System.out.print("Enter salary: ");
-        double salary = validate.getSalary(0);
+        double salary = 0;
 
-        double newSalary = 0;
-
-        if (status.equalsIgnoreCase("UP")) {
-            newSalary = worker.getSalary() + salary;
-        } else if (status.equalsIgnoreCase("DOWN")) {
-            newSalary = worker.getSalary() - salary;
+        while (true) {
+            System.out.print("Enter salary: ");
+            salary = validate.getSalary(0);
+            if (status.equalsIgnoreCase("down")) {
+                if (worker.getSalary() - salary < 0) {
+                    System.out.println("Entered salary must be smaller than " + worker.getSalary());
+                } else {
+                    System.out.println("greater");
+                    break;
+                }
+            } else {
+                System.out.println("up");
+                break;
+            }
         }
 
-        worker.setSalary(newSalary);
-        worker.setStatus(status);
-        worker.setDate(date);
+        History history = new History(salary, status, date, worker);
+
+        if (status.equalsIgnoreCase("UP")) {
+            history.increaseSalary();
+        } else if (status.equalsIgnoreCase("DOWN")) {
+            history.decreaseSalary();
+        }
+
+        historyList.add(history);
     }
 
     public Worker initWorker() {
@@ -202,11 +251,7 @@ public class Management {
         System.out.println("Enter work location: ");
         String location = validate.getLocation();
 
-        String status = "-";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-        String date = sdf.format(new Date());
-        Worker newWorker = new Worker(id, name, age, salary, status, date, location);
+        Worker newWorker = new Worker(id, name, age, salary, location);
 
         return newWorker;
     }
